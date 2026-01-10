@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator pothos {
+  provider = "prisma-pothos-types"
+}
+
+model Stock {
+  symbol      String   @id
+  name        String
+  price       Float
+  change      Float
+  sector      String?
+  narrative   String?
+  lastUpdated DateTime @default(now())
+  automated   Boolean  @default(false)
+  snapshots   Snapshot[]
+}
+
+enum Sentiment {
+  BULLISH
+  BEARISH
+  NEUTRAL
+}
+
+model Snapshot {
+  id            String    @id @default(cuid())
+  stockId       String
+  stock         Stock     @relation(fields: [stockId], references: [symbol])
+  price         Float
+  changePercent Float
+  narrative     String
+  sentiment     Sentiment
+  timestamp     DateTime  @default(now())
+  sources       Source[]
+}
+
+model Source {
+  id          String   @id @default(cuid())
+  snapshotId  String
+  snapshot    Snapshot @relation(fields: [snapshotId], references: [id])
+  url         String
+  title       String
+  publisher   String
+  publishedAt DateTime
+}
