@@ -2,7 +2,12 @@ import yahooFinance from 'yahoo-finance2';
 
 type Range = '1d' | '1w' | '1mo' | '1y';
 
-export async function getStockHistory(symbol: string, range: Range = '1mo') {
+export interface StockHistory {
+  date: string;
+  price: number | null;
+}
+
+export async function getStockHistory(symbol: string, range: Range = '1mo'): Promise<StockHistory[]> {
   try {
     const now = new Date();
     let period1 = new Date();

@@ -1,59 +1,57 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { ingestTicker } from '@/lib/ingest';
-import yahooFinance from 'yahoo-finance2';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import yahooFinance from "yahoo-finance2";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { symbol } = body;
-
+    
     if (!symbol) {
       return NextResponse.json({ error: 'Symbol is required' }, { status: 400 });
     }
 
     const upperSymbol = symbol.toUpperCase();
 
-    // 1. Fetch Company Name (Validation)
-    let name = upperSymbol;
-    try {
-      const quote = await yahooFinance.quote(upperSymbol);
-      if (quote.longName) {
-        name = quote.longName;
-      } else if (quote.shortName) {
-        name = quote.shortName;
-      }
-    } catch (e) {
-      console.warn(`Could not validate symbol ${upperSymbol} with Yahoo.`, e);
-      // Optional: Return error if strict validation is desired
+    // 1. Instantiate Yahoo Finance Properly
+    // @ts-ignore
+    const yf = new yahooFinance();
+    
+    // 2. Fetch Basic Data (Fast)
+    const quote = await yf.quote(upperSymbol);
+    
+    if (!quote) {
+      return NextResponse.json({ error: "Stock not found" }, { status: 404 });
     }
 
-    // 2. Create in DB
-    const newStock = await prisma.stock.create({
+    let name = quote.longName || quote.shortName || upperSymbol;
+    const price = quote.regularMarketPrice || 0;
+    const change = quote.regularMarketChangePercent || 0;
+
+    // 3. Create Stock in DB (Skip AI for now)
+    const stock = await prisma.stock.create({
       data: {
         symbol: upperSymbol,
         name: name,
-        price: 0,
-        change: 0,
+        price: price,
+        change: change,
+        // Set a placeholder so the UI knows it's new
+        narrative: "Analysis pending... Click refresh to generate.", 
+        lastUpdated: new Date(),
       },
     });
 
-    // 3. Trigger Ingestion Immediately (Background or Await)
-    // We await it so the user sees data immediately on refresh
-    await ingestTicker(upperSymbol);
+    return NextResponse.json(stock);
 
-    // 4. Fetch the fully updated record
-    const updatedStock = await prisma.stock.findUnique({
-      where: { symbol: upperSymbol },
-    });
-
-    return NextResponse.json(updatedStock || newStock);
   } catch (error: any) {
     if (error.code === 'P2002') { // Prisma unique constraint error
       return NextResponse.json({ error: 'Stock already in watchlist' }, { status: 409 });
     }
-    console.error('Error adding stock:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("Error adding stock:", error);
+    return NextResponse.json(
+      { error: "Failed to add stock" },
+      { status: 500 }
+    );
   }
 }
 

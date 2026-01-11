@@ -8,28 +8,31 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragOverlay,
 } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  useSortable,
   rectSortingStrategy,
+  useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { SectorWidget, SentimentWidget, TrendingWidget } from "./DashboardWidgets";
-import { PriceChart } from "./PriceChart";
-import { NewsWidget } from "./NewsWidget";
+import { SectorWidget, SentimentWidget } from "@/components/DashboardWidgets";
+import { NewsWidget } from "@/components/NewsWidget";
+import { MarketSummaryWidget } from "@/components/MarketSummaryWidget";
+import { StockHistory } from "@/lib/history";
+import { HeroChart } from "@/components/HeroChart";
 
 // --- Sortable Item Wrapper ---
-function SortableItem({ id, className, children }: { id: string, className?: string, children: React.ReactNode }) {
+function SortableItem({ id, children, className }: { id: string; children: React.ReactNode; className?: string }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
-  
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    zIndex: isDragging ? 50 : "auto",
     opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 50 : "auto",
   };
 
   return (
@@ -39,13 +42,31 @@ function SortableItem({ id, className, children }: { id: string, className?: str
   );
 }
 
-// --- Main Grid Component ---
-export function DraggableDashboard({ serverData }: { serverData: any }) {
-  // Default Layout IDs
+// --- Main Component ---
+interface DashboardProps {
+  serverData: {
+    sectors: any[];
+    vix: any;
+    trending: any[];
+    heroHistory: StockHistory[];
+    heroSymbol: string;
+    heroName: string;
+    news: any[];
+    marketSummary?: any;
+  };
+}
+
+export function DraggableDashboard({ serverData }: DashboardProps) {
   const [items, setItems] = useState([
-    "hero-chart", "sectors", "sentiment", "trending", "news"
+    "hero-chart",
+    "market-summary",
+    "sectors",
+    "sentiment",
+    "news"
   ]);
+
   const [isMounted, setIsMounted] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -53,13 +74,57 @@ export function DraggableDashboard({ serverData }: { serverData: any }) {
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-        activationConstraint: {
-            distance: 8,
-        },
+      activationConstraint: {
+        distance: 8,
+      },
     }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
   );
 
+  const getItemClass = (id: string) => {
+    switch (id) {
+      case "hero-chart":
+        return "col-span-1 md:col-span-2 lg:col-span-3 min-h-[350px]";
+      case "news":
+        return "col-span-1 md:col-span-2 lg:col-span-3 min-h-[400px]";
+      case "sectors":
+        return "col-span-1 min-h-[300px]";
+      case "market-summary":
+        return "col-span-1 min-h-[300px]";
+      case "sentiment":
+        return "col-span-1 min-h-[300px]";
+      default:
+        return "col-span-1";
+    }
+  };
+
+  const renderWidget = (id: string) => {
+    switch (id) {
+      case "hero-chart":
+        return (
+          <HeroChart 
+            data={serverData.heroHistory} 
+            symbol={serverData.heroSymbol} 
+            name={serverData.heroName} 
+          />
+        );
+      case "sectors":
+        return <SectorWidget data={serverData.sectors} />;
+      case "sentiment":
+        return <SentimentWidget vix={serverData.vix} />;
+      case "market-summary":
+      case "trending":
+        return <MarketSummaryWidget data={serverData.marketSummary || {}} />;
+      case "news":
+        return <NewsWidget news={serverData.news} />;
+      default:
+        return null;
+    }
+  };
+
+  const handleDragStart = (event: any) => setActiveId(event.active.id);
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
     if (active.id !== over.id) {
@@ -69,49 +134,12 @@ export function DraggableDashboard({ serverData }: { serverData: any }) {
         return arrayMove(items, oldIndex, newIndex);
       });
     }
-  };
-
-  // Render Helper
-  const renderWidget = (id: string) => {
-    switch(id) {
-      case "hero-chart":
-        return (
-            <div className="h-full bg-secondary/10 rounded-xl p-4 border border-border/50">
-                <div className="flex items-center justify-between mb-4">
-                   <h3 className="font-bold text-lg">
-                     {serverData.heroName || serverData.heroSymbol || "Market Mover"} 
-                     <span className="text-muted-foreground ml-2 text-sm">({serverData.heroSymbol || "AAPL"})</span>
-                   </h3>
-                   <span className="text-xs text-muted-foreground">30 Day Trend</span>
-                </div>
-                <PriceChart data={serverData.heroHistory || []} />
-            </div>
-        ); 
-      case "sectors":
-        return <SectorWidget data={serverData.sectors} />;
-      case "sentiment":
-        return <SentimentWidget vix={serverData.vix} />;
-      case "trending":
-        return <TrendingWidget data={serverData.trending} />;
-      case "news":
-        return <NewsWidget news={serverData.news} />;
-      default:
-        return null;
-    }
-  };
-
-  // Grid Classes Configuration
-  const getItemClass = (id: string) => {
-    switch(id) {
-      case "hero-chart": return "col-span-1 md:col-span-2 row-span-2 min-h-[400px]";
-      case "news": return "col-span-1 md:col-span-2 min-h-[400px]";
-      default: return "col-span-1 min-h-[200px]";
-    }
+    setActiveId(null);
   };
 
   if (!isMounted) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((id) => (
           <div key={id} className={getItemClass(id)}>
             {renderWidget(id)}
@@ -122,9 +150,14 @@ export function DraggableDashboard({ serverData }: { serverData: any }) {
   }
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
       <SortableContext items={items} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((id) => (
             <SortableItem key={id} id={id} className={getItemClass(id)}>
               {renderWidget(id)}
@@ -132,6 +165,14 @@ export function DraggableDashboard({ serverData }: { serverData: any }) {
           ))}
         </div>
       </SortableContext>
+
+      <DragOverlay>
+        {activeId ? (
+          <div className={`${getItemClass(activeId)} opacity-80 cursor-grabbing`}>
+             <div className="h-full w-full bg-secondary/50 rounded-xl border-2 border-primary/50" />
+          </div>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 }

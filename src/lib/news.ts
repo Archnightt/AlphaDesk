@@ -12,17 +12,15 @@ export interface NewsItem {
   summary?: string; 
 }
 
-export async function getMarketNews(): Promise<NewsItem[]> {
+export async function getFullNewsFeed(count: number = 20, query: string = 'US Markets'): Promise<NewsItem[]> {
   try {
     // @ts-ignore
     const yf = new yahooFinance();
     
-    // Fallback: Use Search. 
-    // We search for "Business" to get general market news.
-    // Note: Search results often lack the full "summary" field, 
-    // but this prevents the dashboard from crashing.
-    const result = await yf.search('Business News', { 
-      newsCount: 10, 
+    console.log(`Fetching news for: ${query} (Count: ${count})`);
+
+    const result = await yf.search(query, { 
+      newsCount: count, 
       quotesCount: 0 
     });
 
@@ -35,13 +33,16 @@ export async function getMarketNews(): Promise<NewsItem[]> {
       link: item.link,
       providerPublishTime: item.providerPublishTime,
       thumbnail: item.thumbnail,
-      // Some search results might hide snippets in other fields, 
-      // but usually they are just titles. We handle missing summaries in the UI.
       summary: item.summary || item.snippet || "" 
     })) as NewsItem[];
 
   } catch (error) {
-    console.error("Failed to fetch market news:", error);
+    console.error("Failed to fetch news:", error);
     return [];
   }
+}
+
+export async function getMarketNews(): Promise<NewsItem[]> {
+   // Unify logic to ensure consistency across dashboard and news page
+   return await getFullNewsFeed(10);
 }

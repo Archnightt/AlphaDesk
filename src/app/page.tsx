@@ -1,52 +1,64 @@
-import { MarketIndices } from "@/components/MarketIndices";
 import { getDashboardData } from "@/lib/dashboard-data";
 import { DraggableDashboard } from "@/components/DraggableDashboard";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import Link from "next/link";
+import { ModeToggle } from "@/components/mode-toggle";
+import { StockSearch } from "@/components/StockSearch";
 import { DraggableWatchlist } from "@/components/DraggableWatchlist";
+import { MarketIndices } from "@/components/MarketIndices";
+import { DraggablePageLayout } from "@/components/DraggablePageLayout";
 import { prisma } from "@/lib/prisma";
-import { getMarketNews } from "@/lib/news";
 
 export default async function DashboardPage() {
   // 1. Fetch Watchlist (DB)
-  // 2. Fetch Widget Data (API)
-  const [stocks, dashboardData] = await Promise.all([
-    prisma.stock.findMany({
-      orderBy: { lastUpdated: 'desc' }
-    }),
-    getDashboardData()
-  ]);
+  const stocks = await prisma.stock.findMany({
+    orderBy: { lastUpdated: 'desc' }
+  });
+
+  // 2. Fetch Widget Data (Cached API)
+  const dashboardData = await getDashboardData();
 
   return (
-    <main className="min-h-screen text-foreground p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+      
+      {/* Toolbar / Header Area */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+           <p className="text-muted-foreground">Market overview and watchlist</p>
+        </div>
+        
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          <StockSearch />
+          <ModeToggle />
+          <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+             <Link href="/add"><Plus className="w-4 h-4 mr-1"/> Add Stock</Link>
+          </Button>
+        </div>
+      </div>
+
       {/* 1. Ticker Row */}
       <MarketIndices />
 
-      {/* 2. Main Watchlist (Sortable) */}
-      <div>
-        <div className="flex items-center justify-between mb-4 px-1">
-          <h2 className="text-lg font-semibold">Your Watchlist</h2>
-          <span className="text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded">Drag to Reorder</span>
-        </div>
-        
-        <div className="min-h-[200px]">
-          {stocks.length > 0 ? (
-            <DraggableWatchlist initialStocks={stocks} />
-          ) : (
-            <div className="p-8 text-center text-muted-foreground border border-dashed rounded-lg bg-secondary/20">
-              No stocks tracked. Use the search bar to start adding tickers.
-            </div>
-          )}
-        </div>
-      </div>
+      {/* 2. Reorderable Sections */}
+      <DraggablePageLayout
+        watchlist={
+          <div className="min-h-[200px]">
+            {stocks.length > 0 ? (
+              <DraggableWatchlist initialStocks={stocks} />
+            ) : (
+              <div className="p-8 text-center text-muted-foreground border border-dashed rounded-lg bg-secondary/20">
+                No stocks tracked. Click "Add Stock" to start.
+              </div>
+            )}
+          </div>
+        }
+        overview={
+          <DraggableDashboard serverData={dashboardData} />
+        }
+      />
 
-      {/* 3. The Draggable Bento Grid */}
-      <div className="pt-4">
-         <div className="flex items-center justify-between mb-4 px-1">
-           <h2 className="text-lg font-semibold">Market Overview</h2>
-           <span className="text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded">Drag to Reorder</span>
-         </div>
-         <DraggableDashboard serverData={dashboardData} />
-      </div>
-
-    </main>
+    </div>
   );
 }
