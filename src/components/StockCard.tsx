@@ -43,7 +43,7 @@ export function StockCard({ stock }: { stock: Stock }) {
         <DeleteButton symbol={stock.symbol} />
       </div>
       <Link href={`/stocks/${stock.symbol}`} className="block h-full">
-        <Card className={`h-full cursor-pointer transition-all hover:bg-secondary/80 border-0 shadow-sm dark:shadow-none ${stock.isFeatured ? 'bg-primary/5 border-primary/20 ring-1 ring-primary/20' : 'bg-card'}`}>
+        <Card className={`h-full cursor-pointer transition-all hover:bg-secondary/80 ${stock.isFeatured ? 'bg-primary/5 border-primary/20 ring-1 ring-primary/20' : 'bg-card'}`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="space-y-1">
               <div className="flex items-center gap-2">

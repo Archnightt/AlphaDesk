@@ -34,7 +34,7 @@ function SortableSection({ id, title, children }: { id: string, title: string, c
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="mb-10 bg-background rounded-xl border border-transparent hover:border-border/50 transition-colors p-2 md:p-4">
+    <div ref={setNodeRef} style={style} className="mb-10 bg-background rounded-xl border border-border/20 hover:border-border/50 transition-colors p-2 md:p-4">
       {/* Section Header with Drag Handle */}
       <div className="flex items-center justify-between mb-4 px-2">
          <div className="flex items-center gap-2 group cursor-grab active:cursor-grabbing" {...attributes} {...listeners}>

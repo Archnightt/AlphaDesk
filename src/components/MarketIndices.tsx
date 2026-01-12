@@ -39,7 +39,7 @@ export async function MarketIndices() {
           <Card 
             key={index.symbol} 
             // FIX: min-w-[160px] prevents squishing. flex-1 ensures they fill width if space allows.
-            className="min-w-[160px] flex-1 p-4 border-0 bg-secondary/30 flex flex-col justify-between hover:bg-secondary/50 transition-colors shrink-0"
+            className="min-w-[160px] flex-1 p-4 bg-secondary/30 flex flex-col justify-between hover:bg-secondary/50 transition-colors shrink-0"
           >
             <div className="text-sm font-medium text-muted-foreground whitespace-nowrap">
               {getName(index.symbol)}

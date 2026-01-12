@@ -42,7 +42,11 @@ export function NewsWidget({ news }: { news: any[] }) {
   const prevStory = () => setCurrentIndex((prev) => (prev - 1 + news.length) % news.length);
 
   return (
-		<Card className="group relative h-full w-full overflow-hidden border-0 bg-zinc-900 flex flex-col justify-end" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
+    <Card 
+      className="group relative h-full w-full overflow-hidden dark:bg-zinc-900 flex flex-col justify-end"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
 			{/* 1. Background Image */}
 			<div className="absolute inset-0 z-0">
 				{imageUrl ? (

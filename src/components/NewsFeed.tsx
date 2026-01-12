@@ -126,7 +126,7 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
       {/* 1. Hero Section */}
       {heroStory && (
         <Link href={heroStory.link} target="_blank" className="block group">
-          <div className="relative h-[400px] w-full rounded-2xl overflow-hidden border border-border/50 shadow-2xl">
+          <div className="relative h-[400px] w-full rounded-2xl overflow-hidden border border-border shadow-2xl bg-card dark:bg-transparent">
             {/* Background: Image OR Gradient Fallback */}
             <div className={`absolute inset-0 ${!heroImage ? getFallbackGradient(heroStory.title) : 'bg-zinc-900'}`}>
                {heroImage && (
@@ -178,7 +178,7 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
           
           return (
             <Link href={story.link} key={story.uuid} target="_blank" className="group h-full block">
-              <Card className="h-full border-0 bg-secondary/10 hover:bg-secondary/20 transition-all duration-300 overflow-hidden flex flex-col shadow-sm hover:shadow-md">
+              <Card className="h-full border bg-card dark:bg-secondary/10 hover:shadow-md dark:hover:bg-secondary/20 transition-all duration-300 overflow-hidden flex flex-col shadow-sm">
                 
                 {/* Card Image Area */}
                 <div className={`h-48 relative overflow-hidden ${!imgUrl ? getFallbackGradient(story.title) : 'bg-zinc-800'}`}>
