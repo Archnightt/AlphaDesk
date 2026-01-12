@@ -4,7 +4,8 @@ import { Newspaper } from "lucide-react";
 
 export default async function NewsPage() {
   // Fetch initial batch (Server Side)
-  const initialNews = await getFullNewsFeed(20);
+  // We want exactly 5 for the carousel (Hero) and 9 for the feed (Grid) = 14 total
+  const initialNews = await getFullNewsFeed(14);
   
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">

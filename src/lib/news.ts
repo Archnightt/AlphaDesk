@@ -17,13 +17,22 @@ export async function getFullNewsFeed(count: number = 20, query: string = 'US Ma
     // @ts-ignore
     const yf = new yahooFinance();
     
-    // Perform two parallel searches to ensure we get enough items (Yahoo often caps at 10 per query)
-    const [res1, res2] = await Promise.all([
-      yf.search(query, { newsCount: count, quotesCount: 0 }),
-      yf.search(query + ' economy stocks', { newsCount: count, quotesCount: 0 })
+    // Perform multiple parallel searches to ensure we get enough items (Yahoo often caps at 10 per query)
+    // We request more than needed to handle deduplication and API limits
+    const fetchCount = Math.max(count, 30);
+    const [res1, res2, res3, res4] = await Promise.all([
+      yf.search(query, { newsCount: fetchCount, quotesCount: 0 }),
+      yf.search('Tech Stocks', { newsCount: fetchCount, quotesCount: 0 }),
+      yf.search('Economy News', { newsCount: fetchCount, quotesCount: 0 }),
+      yf.search('Global Finance', { newsCount: fetchCount, quotesCount: 0 })
     ]);
 
-    const allNews = [...(res1.news || []), ...(res2.news || [])];
+    const allNews = [
+      ...(res1.news || []), 
+      ...(res2.news || []),
+      ...(res3.news || []),
+      ...(res4.news || [])
+    ];
     
     if (allNews.length === 0) return [];
 
@@ -53,5 +62,5 @@ export async function getFullNewsFeed(count: number = 20, query: string = 'US Ma
 
 export async function getMarketNews(): Promise<NewsItem[]> {
    // Unify logic to ensure consistency across dashboard and news page
-   return await getFullNewsFeed(10);
+   return await getFullNewsFeed(14);
 }
