@@ -18,7 +18,8 @@ export async function POST(request: Request) {
     const yf = new yahooFinance();
     
     // 2. Fetch Basic Data (Fast)
-    const quote = await yf.quote(upperSymbol);
+    // FIX: Cast to any to prevent TypeScript from thinking this is an array
+    const quote = await yf.quote(upperSymbol) as any;
     
     if (!quote) {
       return NextResponse.json({ error: "Stock not found" }, { status: 404 });
