@@ -43,22 +43,18 @@ export function NewsWidget({ news }: { news: any[] }) {
   const prevStory = () => setCurrentIndex((prev) => (prev - 1 + news.length) % news.length);
 
   return (
-    <Card 
-      className="group relative h-full w-full overflow-hidden dark:bg-zinc-900 flex flex-col justify-end"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
+		<Card className="group relative h-full w-full overflow-hidden dark:bg-zinc-900 flex flex-col justify-end" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
 			{/* 1. Background Image */}
 			<div className="absolute inset-0 z-0">
 				{imageUrl ? (
-					<Image 
-            src={imageUrl} 
-            alt="News Background" 
-            fill
-            className="object-cover opacity-60 transition-transform duration-[10s] ease-linear scale-100 group-hover:scale-110"
-            priority
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
+					<Image
+						src={imageUrl}
+						alt="News Background"
+						fill
+						className="object-cover opacity-60 transition-transform duration-[10000ms] ease-linear scale-100 group-hover:scale-110"
+						priority
+						sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+					/>
 				) : (
 					<div className="w-full h-full bg-gradient-to-br from-zinc-800 to-black opacity-80" />
 				)}
