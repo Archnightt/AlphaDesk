@@ -73,7 +73,8 @@ export async function getDashboardData() {
     })
     .catch(() => []);
 
-    const heroPromise = getStockHistory(heroSymbol);
+    // 5. Fetch Hero Chart History
+    const heroPromise = getStockHistory(heroSymbol, '1mo');
 
     // 3. Resolve All
     const [sectors, rawSummary, sparklines, vix, trendingResult, news, heroHistory] = await Promise.all([

@@ -101,7 +101,6 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
       case "hero-chart":
         return (
           <HeroChart 
-            data={serverData.heroHistory} 
             symbol={serverData.heroSymbol} 
             name={serverData.heroName} 
           />
