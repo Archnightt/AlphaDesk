@@ -11,7 +11,8 @@ export async function getStockDetails(symbol: string) {
     };
     
     // Fetch detailed modules
-    const result = await yf.quoteSummary(symbol, queryOptions);
+    // FIX: Cast queryOptions to any to bypass strict typing issues with the modules array
+    const result = await yf.quoteSummary(symbol, queryOptions as any);
     
     // Fetch Specific Company News (Rich Media)
     const newsResult = await yf.search(symbol, { newsCount: 5, quotesCount: 0 });
