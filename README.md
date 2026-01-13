@@ -1,36 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+AlphaDesk 📈
+Real-Time Financial Analytics & Market Intelligence Dashboard
 
-## Getting Started
+AlphaDesk is a modern, modular financial dashboard designed to provide retail investors with institutional-grade market overviews. It features a fully customizable drag-and-drop interface, real-time data visualization, and an intelligent news aggregation engine that bypasses standard API rate limits to deliver comprehensive market coverage.
 
-First, run the development server:
+🚀 Key Features
+Customizable Workspace: Built with @dnd-kit, users can drag, drop, and reorder widgets (Charts, News, Sectors) to create a personalized layout. State is persisted locally for a consistent experience.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Smart News Aggregator: Implements a custom "Multi-Index Aggregation" algorithm. It queries S&P 500, Dow Jones, and Nasdaq streams simultaneously, deduplicates stories by UUID, and merges them to overcome third-party API pagination limits.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Real-Time Market Data: Live tracking of major indices, sector performance heatmaps, and VIX (Volatility Index) sentiment analysis.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Watchlist Management: Persistent portfolio tracking using a PostgreSQL database (via Docker) and Prisma ORM.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Responsive Visualization: Interactive financial charts powered by recharts, featuring time-frame toggling (1D, 1W, 1M, YTD).
 
-## Learn More
+🛠️ Tech Stack
+Frontend: Next.js 16 (App Router & Turbopack), React 19, Tailwind CSS.
 
-To learn more about Next.js, take a look at the following resources:
+Backend / Data: Server Actions, Prisma ORM.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Database: PostgreSQL (Containerized via Docker).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+State Management: React Hooks & LocalStorage for layout persistence.
 
-## Deploy on Vercel
+APIs: Yahoo Finance (yahoo-finance2).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deployment: Vercel & Neon (Database).
