@@ -99,7 +99,7 @@ export function DraggableDashboard({ serverData }: DashboardProps) {
       case "sentiment":
         return "col-span-1 min-h-[300px]";
       case "movers":
-        return "col-span-1 min-h-[350px]";
+        return "col-span-1 row-span-2 min-h-[700px]";
       case "economic-calendar":
         return "col-span-1 min-h-[350px]";
       default:

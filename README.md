@@ -21,6 +21,7 @@ Customizable Workspace: Built with @dnd-kit, users can drag, drop, and reorder w
 
 
 🛠️ **Tech Stack**
+
 Frontend: Next.js 16 (App Router & Turbopack), React 19, Tailwind CSS.
 
 Backend / Data: Server Actions, Prisma ORM.

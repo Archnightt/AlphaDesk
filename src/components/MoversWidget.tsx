@@ -20,7 +20,7 @@ function MoverList({ items, type }: { items: Mover[], type: 'gainers' | 'losers'
   }
 
   return (
-    <div className="h-[260px] overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-secondary">
+    <div className="h-[600px] overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-thumb-secondary">
       {items.map((item) => (
         <Link 
             key={item.symbol} 
