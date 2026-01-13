@@ -1,10 +1,19 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { NewsImage } from "./NewsImage";
 
 function timeAgo(timestamp: number) {
   if (!timestamp) return '';
-  const seconds = Math.floor((new Date().getTime() - timestamp * 1000) / 1000);
+  
+  // Heuristic: If timestamp is > 1e11 (approx year 1973 in ms), treat as milliseconds.
+  // Otherwise treat as seconds.
+  const isMs = timestamp > 100000000000;
+  const timestampMs = isMs ? timestamp : timestamp * 1000;
+
+  const seconds = Math.floor((new Date().getTime() - timestampMs) / 1000);
+  
+  if (seconds < 0) return "Just now"; // Handle slight clock skew
+
   let interval = seconds / 3600;
   if (interval > 1) return Math.floor(interval) + "h ago";
   interval = seconds / 60;
@@ -42,19 +51,10 @@ export function CompanyNews({ news, symbol }: { news: any[], symbol: string }) {
             >
                {/* Larger Thumbnail Section */}
                <div className="relative w-full md:w-64 h-48 md:h-40 flex-shrink-0 bg-secondary/30 rounded-xl overflow-hidden border border-border/50 shadow-sm">
-                 {item.thumbnail?.resolutions?.[0]?.url ? (
-                   <Image 
-                     src={item.thumbnail.resolutions[0].url} 
-                     alt="News Thumbnail" 
-                     fill 
-                     className="object-cover transition-transform duration-500 group-hover:scale-105"
-                     sizes="(max-width: 768px) 100vw, 300px"
-                   />
-                 ) : (
-                   <div className="w-full h-full flex items-center justify-center bg-secondary/50 text-muted-foreground">
-                     No Image
-                   </div>
-                 )}
+                 <NewsImage 
+                   src={item.thumbnail?.resolutions?.[0]?.url} 
+                   alt={item.title || "News Thumbnail"} 
+                 />
                </div>
                
                {/* Larger Text Content */}
