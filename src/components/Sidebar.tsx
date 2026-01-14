@@ -93,8 +93,8 @@ export function Sidebar() {
 			<div
 				className={cn(
 					"hidden md:flex flex-col justify-between fixed left-4 top-4 bottom-4 z-50",
-					"bg-[#1f1f1f] border border-white/5",
-					"rounded-[1.5rem] shadow-2xl overflow-hidden",
+					"bg-[#f8f8f8] dark:bg-neutral-900 border border-neutral-200 dark:border-white/5",
+					"rounded-[1.5rem] overflow-hidden",
 					"transition-[width] duration-300 ease-in-out",
 					isExpanded ? "w-64" : "w-24"
 				)}>
@@ -107,7 +107,7 @@ export function Sidebar() {
 							</div>
 						</div>
 						<div className={cn("overflow-hidden transition-all duration-300 whitespace-nowrap", isExpanded ? "opacity-100 ml-4 w-auto" : "opacity-0 w-0")}>
-							<h1 className="text-xl font-bold text-white tracking-tight">AlphaDesk</h1>
+							<h1 className="text-xl font-bold text-neutral-900 dark:text-white tracking-tight">AlphaDesk</h1>
 						</div>
 					</Link>
 				</div>
@@ -120,12 +120,16 @@ export function Sidebar() {
 							<Link
 								key={route.href}
 								href={route.href}
-								className={cn("group flex items-center h-14 rounded-2xl transition-all duration-300 overflow-hidden", "hover:bg-white/5", isActive ? "bg-white/10 shadow-sm" : "text-neutral-400")}>
+								className={cn(
+									"group flex items-center h-14 rounded-2xl transition-all duration-300 overflow-hidden",
+									"hover:bg-neutral-100 dark:hover:bg-white/5",
+									isActive ? "bg-neutral-100 dark:bg-white/10 shadow-sm" : "text-neutral-500 dark:text-neutral-400"
+								)}>
 								<div className="w-16 shrink-0 flex items-center justify-center">
-									<route.icon className={cn("h-6 w-6 transition-colors", isActive ? "text-white" : "group-hover:text-white")} />
+									<route.icon className={cn("h-6 w-6 transition-colors", isActive ? "text-neutral-900 dark:text-white" : "group-hover:text-neutral-900 dark:group-hover:text-white")} />
 								</div>
 								<div className={cn("overflow-hidden transition-all duration-300 whitespace-nowrap", isExpanded ? "opacity-100 ml-4 w-auto" : "opacity-0 w-0")}>
-									<span className={cn("text-sm font-semibold", isActive ? "text-white" : "group-hover:text-white")}>{route.label}</span>
+									<span className={cn("text-sm font-semibold", isActive ? "text-neutral-900 dark:text-white" : "group-hover:text-neutral-900 dark:group-hover:text-white")}>{route.label}</span>
 								</div>
 							</Link>
 						);
@@ -139,7 +143,7 @@ export function Sidebar() {
 						variant="ghost"
 						size="icon"
 						onClick={() => setIsExpanded(!isExpanded)}
-						className="w-full h-12 rounded-2xl hover:bg-white/5 text-neutral-400 hover:text-white transition-colors flex items-center justify-center">
+						className="w-full h-12 rounded-2xl hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors flex items-center justify-center">
 						{isExpanded ? <ChevronLeft className="h-6 w-6" /> : <ChevronRight className="h-6 w-6" />}
 					</Button>
 				</div>
