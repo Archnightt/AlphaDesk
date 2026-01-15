@@ -76,6 +76,15 @@ export function StockSearch() {
       });
       
       if (!res.ok) {
+        if (res.status === 409) {
+          toast({
+            title: "Already in Watchlist",
+            description: `${symbol.toUpperCase()} is already in your dashboard.`,
+          });
+          setOpen(false);
+          setQuery("");
+          return;
+        }
         const errorData = await res.json();
         throw new Error(errorData.error || "Failed to add stock");
       }
