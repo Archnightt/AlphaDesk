@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, RefreshCw, Pin } from "lucide-react";
+import { TrendingUp, TrendingDown, RefreshCw, Pin, Loader2 } from "lucide-react";
 import { DeleteButton } from "./DeleteButton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Stock {
   symbol: string;
@@ -18,11 +19,66 @@ interface Stock {
   isFeatured?: boolean;
 }
 
-export function StockCard({ stock }: { stock: Stock }) {
+export function StockCard({ stock: initialStock }: { stock: Stock }) {
+  const [stock, setStock] = useState(initialStock);
   const isPositive = stock.change > 0;
   const [isRefreshing, setIsRefreshing] = useState(false);
   const router = useRouter();
   const currencySymbol = stock.currency || "$";
+
+  const isPending = stock.narrative?.includes("Analysis pending");
+
+  // Sync state with props when they change (e.g. from a global refresh)
+  useEffect(() => {
+    setStock(initialStock);
+  }, [initialStock]);
+
+  // Polling logic for pending narratives
+  useEffect(() => {
+    if (!isPending) return;
+
+    let intervalId: NodeJS.Timeout;
+    let attempts = 0;
+    const maxAttempts = 15; // 30 seconds total
+
+    const poll = async () => {
+      attempts++;
+      try {
+        // We use the refresh endpoint but WITHOUT forceUpdate=true to just GET the current status
+        // Wait, the refresh endpoint ALWAYS triggers ingestTicker(symbol, true).
+        // Let's just check if we can get the stock data another way or if we should just wait.
+        // Actually, we can just use router.refresh() and rely on the Server Component 
+        // providing the new data, but we need to know when to stop polling.
+        
+        // BETTER: Let's fetch from the DB via a new simple API or just use the current stock from props.
+        // Since we are in a Client Component, we can't easily read DB directly.
+        // Let's use the search API if it exists or just wait for the background task.
+        
+        const res = await fetch(`/api/stocks/refresh`, {
+          method: 'POST',
+          body: JSON.stringify({ symbol: stock.symbol })
+        });
+        
+        if (res.ok) {
+          const updated = await res.json();
+          if (updated && !updated.narrative.includes("Analysis pending")) {
+            setStock(updated);
+            router.refresh();
+            return;
+          }
+        }
+      } catch (e) {
+        console.error("Polling error", e);
+      }
+
+      if (attempts >= maxAttempts) {
+        clearInterval(intervalId);
+      }
+    };
+
+    intervalId = setInterval(poll, 2000); // Poll every 2 seconds
+    return () => clearInterval(intervalId);
+  }, [isPending, stock.symbol, router]);
 
   const handlePin = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -101,9 +157,18 @@ export function StockCard({ stock }: { stock: Stock }) {
                   </button>
                 </div>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-5 italic">
-                "{stock.narrative || "Analyst unavailable."}"
-              </p>
+              <div className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-5 italic">
+                {isPending ? (
+                  <div className="space-y-2 py-1">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-[90%]" />
+                    <Skeleton className="h-4 w-[95%]" />
+                    <Skeleton className="h-4 w-[40%]" />
+                  </div>
+                ) : (
+                  `"${stock.narrative || "Analyst unavailable."}"`
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>

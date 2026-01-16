@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import yahooFinance from "yahoo-finance2";
 import { getCurrencySymbol } from "@/lib/utils";
+import { ingestTicker } from "@/lib/ingest";
 
 export async function POST(request: Request) {
 	try {
@@ -45,6 +46,10 @@ export async function POST(request: Request) {
 				lastUpdated: new Date(),
 			},
 		});
+
+		// Trigger full ingestion (including AI) in background
+		// We don't await this so the response returns quickly
+		ingestTicker(upperSymbol, true).catch(err => console.error("Background ingestion failed:", err));
 
 		return NextResponse.json(stock);
 	} catch (error: any) {

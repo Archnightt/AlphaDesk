@@ -81,6 +81,6 @@ export async function generateNarrative(context: AIContext) {
 
   } catch (error) {
     console.error(`Gemini Error for ${symbol}:`, error);
-    return `${symbol} is trading at $${price}. Detailed analysis is currently unavailable.`;
+    return `${symbol} is trading at ${price}. Detailed analysis is currently unavailable.`;
   }
 }

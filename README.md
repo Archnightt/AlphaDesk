@@ -43,12 +43,12 @@
 One of the core challenges of AlphaDesk was balancing the high latency of Generative AI (RAG pipelines) with the need for a snappy user experience.
 
 **The Problem:**
-Generating a "Yahoo-Finance style" deep dive requires fetching 4 separate data modules (Insiders, Financials, News, Ratings) and running a complex LLM prompt.
-* *Average Cold Load Time:* **~10.5s**
+Generating a deep dive requires fetching multiple data modules like Insiders, Financials, News, Ratings etc. and running a complex LLM prompt.
+* *Average Cold Load Time:* **~8.8s**
 
 **The Solution:**
 Implemented a Stale-While-Revalidate caching strategy using Upstash Redis to serve cached insights instantly while updating in the background.
-* *Average Warm Load Time:* **<200ms**
+* *Average Warm Load Time:* **<150ms**
 * *Latency Reduction:* **~98%**
 
 ## 🚀 Vercel Deployment
