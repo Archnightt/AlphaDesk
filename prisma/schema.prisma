@@ -22,6 +22,7 @@ model Stock {
   currency    String?
   sector      String?
   narrative   String?
+  imageUrl    String?
   lastUpdated DateTime @default(now())
   automated   Boolean  @default(false)
   isFeatured  Boolean  @default(false)

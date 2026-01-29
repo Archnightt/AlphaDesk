@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,7 @@ interface Stock {
   currency?: string | null;
   narrative?: string | null;
   isFeatured?: boolean;
+  imageUrl?: string | null;
 }
 
 export function StockCard({ stock: initialStock }: { stock: Stock }) {
@@ -105,6 +107,17 @@ export function StockCard({ stock: initialStock }: { stock: Stock }) {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
+                {stock.imageUrl && (
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden bg-white shadow-sm ring-1 ring-border">
+                    <Image 
+                      src={stock.imageUrl} 
+                      alt={stock.symbol} 
+                      fill
+                      className="object-contain p-1"
+                      sizes="32px"
+                    />
+                  </div>
+                )}
                 <CardTitle className="text-xl font-bold">{stock.symbol}</CardTitle>
                 {stock.isFeatured && <Pin className="w-3 h-3 text-primary fill-current" />}
               </div>

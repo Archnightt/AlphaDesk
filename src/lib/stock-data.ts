@@ -7,7 +7,7 @@ export async function getStockDetails(symbol: string) {
     try {
       // Instantiate manually to satisfy the library requirements in this environment
       // @ts-ignore
-      const yf = new yahooFinance();
+      const yf = new yahooFinance({ suppressNotices: ['yahooSurvey'] });
       
       const queryOptions = { 
         modules: ['price', 'summaryDetail', 'financialData', 'defaultKeyStatistics'] 

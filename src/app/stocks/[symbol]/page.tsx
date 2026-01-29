@@ -4,6 +4,7 @@ import { HeroChart } from '@/components/HeroChart';
 import { FinancialsWidget } from '@/components/FinancialsWidget';
 import { CompanyNews } from '@/components/CompanyNews';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,9 +39,22 @@ export default async function StockPage({ params }: { params: Promise<{ symbol: 
 
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-4xl font-bold tracking-tighter">{stockDetails.symbol}</h1>
-          <p className="text-xl text-muted-foreground">{stockIngest.name}</p>
+        <div className="flex items-center gap-4">
+          {stockIngest.imageUrl && (
+            <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-white shadow-sm ring-1 ring-border">
+              <Image 
+                src={stockIngest.imageUrl} 
+                alt={stockIngest.name} 
+                fill
+                className="object-contain p-2"
+                sizes="64px"
+              />
+            </div>
+          )}
+          <div>
+            <h1 className="text-4xl font-bold tracking-tighter">{stockDetails.symbol}</h1>
+            <p className="text-xl text-muted-foreground">{stockIngest.name}</p>
+          </div>
         </div>
         <div className="text-right">
           <div className="text-4xl font-mono font-bold">{currency}{price?.toFixed(2)}</div>

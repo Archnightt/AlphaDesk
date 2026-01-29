@@ -1,6 +1,7 @@
 import { prisma } from './prisma';
 import { MarketService } from './market';
 import { generateNarrative } from './ai';
+import { getLogoUrl } from './utils';
 
 // Configuration: How often to refresh the AI narrative?
 const NARRATIVE_TTL_HOURS = 12;
@@ -20,8 +21,10 @@ export async function ingestTicker(symbol: string, forceUpdate = false) {
       where: { symbol: upperSymbol },
     });
 
-    // 3. Decide: Should we regenerate the narrative?
+    // 3. Decide: Should we regenerate the narrative OR fetch missing logo?
     let narrative = existingStock?.narrative || "Analysis pending...";
+    let imageUrl = existingStock?.imageUrl || null;
+    
     const lastUpdated = existingStock?.lastUpdated ? new Date(existingStock.lastUpdated) : new Date(0);
     const now = new Date();
     
@@ -29,29 +32,45 @@ export async function ingestTicker(symbol: string, forceUpdate = false) {
     const hoursDiff = (now.getTime() - lastUpdated.getTime()) / (1000 * 60 * 60);
     const isStale = hoursDiff > NARRATIVE_TTL_HOURS;
     const hasNoNarrative = !existingStock?.narrative || existingStock.narrative === "Analyst unavailable.";
+    const hasNoImage = !existingStock?.imageUrl;
 
-    // ONLY generate AI if it's stale OR empty OR forced
-    if (isStale || hasNoNarrative || forceUpdate) {
-      console.log(`🤖 AI Cache Expired or Forced for ${upperSymbol} (Age: ${hoursDiff.toFixed(1)}h). Generating new...`);
-      const aiStart = performance.now();
+    // Check if we need deep data for AI or Logo
+    const needsDeepData = isStale || hasNoNarrative || forceUpdate || hasNoImage;
+
+    // ONLY generate AI if it's stale OR empty OR forced OR we need image
+    if (needsDeepData) {
       
       // FETCH DEEP CONTEXT (RAG)
       const deepData = await MarketService.getDeepMarketData(upperSymbol);
-      
-      narrative = await generateNarrative({
-        symbol: data.symbol,
-        price: data.price,
-        change: data.changePercent,
-        headlines: data.headlines || [],
-        financials: deepData?.financialData,
-        statistics: deepData?.defaultKeyStatistics,
-        recommendations: deepData?.recommendationTrend,
-        insiders: deepData?.insiderTransactions,
-        earnings: deepData?.earnings
-      });
 
-      const aiEnd = performance.now();
-      console.log(`🧠 AI Generation took ${(aiEnd - aiStart).toFixed(2)}ms`);
+      // Update Logo if missing
+      if (hasNoImage && deepData?.summaryProfile?.website) {
+        const logo = getLogoUrl(deepData.summaryProfile.website);
+        if (logo) imageUrl = logo;
+      }
+      
+      // Generate AI only if needed (stale, no narrative, or forced)
+      if (isStale || hasNoNarrative || forceUpdate) {
+        console.log(`🤖 AI Cache Expired or Forced for ${upperSymbol} (Age: ${hoursDiff.toFixed(1)}h). Generating new...`);
+        const aiStart = performance.now();
+        
+        narrative = await generateNarrative({
+          symbol: data.symbol,
+          price: data.price,
+          change: data.changePercent,
+          headlines: data.headlines || [],
+          financials: deepData?.financialData,
+          statistics: deepData?.defaultKeyStatistics,
+          recommendations: deepData?.recommendationTrend,
+          insiders: deepData?.insiderTransactions,
+          earnings: deepData?.earnings
+        });
+
+        const aiEnd = performance.now();
+        console.log(`🧠 AI Generation took ${(aiEnd - aiStart).toFixed(2)}ms`);
+      } else {
+         console.log(`⚡ Using Cached Narrative for ${upperSymbol} (Age: ${hoursDiff.toFixed(1)}h)`);
+      }
     } else {
       console.log(`⚡ Using Cached Narrative for ${upperSymbol} (Age: ${hoursDiff.toFixed(1)}h)`);
     }
@@ -64,6 +83,7 @@ export async function ingestTicker(symbol: string, forceUpdate = false) {
         change: data.changePercent,
         currency: data.currency,
         narrative: narrative,
+        imageUrl: imageUrl,
         lastUpdated: new Date(), // Update timestamp to show "freshness" of price
       },
       create: {
@@ -73,6 +93,7 @@ export async function ingestTicker(symbol: string, forceUpdate = false) {
         change: data.changePercent,
         currency: data.currency,
         narrative: narrative,
+        imageUrl: imageUrl,
       },
     });
 

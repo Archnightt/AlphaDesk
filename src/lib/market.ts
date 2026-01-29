@@ -3,7 +3,7 @@ import { getCurrencySymbol } from "@/lib/utils";
 import { fetchWithCache } from "@/lib/redis";
 
 // 1. Initialize the library instance
-const yf = new YahooFinance();
+const yf = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 
 export interface MarketData {
 	symbol: string;
@@ -85,7 +85,8 @@ export const MarketService = {
             'recommendationTrend',    // Analyst Ratings
             'earnings',               // Earnings History
             'insiderTransactions',    // Insider Buying/Selling
-            'upgradeDowngradeHistory' // Recent Analyst Actions
+            'upgradeDowngradeHistory', // Recent Analyst Actions
+            'summaryProfile'          // Website/Address (for Logo)
           ]
         };
         // @ts-ignore
