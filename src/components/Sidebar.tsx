@@ -23,24 +23,28 @@ const routes = [
     icon: LayoutDashboard,
     href: "/",
     color: "text-sky-500",
+    bgColor: "bg-sky-500/10",
   },
   {
     label: "Market News",
     icon: Newspaper,
     href: "/news",
     color: "text-violet-500",
+    bgColor: "bg-violet-500/10",
   },
   {
     label: "Analysis",
     icon: LineChart,
     href: "/analysis",
-    color: "text-pink-700",
+    color: "text-pink-500",
+    bgColor: "bg-pink-500/10",
   },
   {
     label: "Settings",
     icon: Settings,
     href: "/settings",
     color: "text-gray-400",
+    bgColor: "bg-gray-400/10",
   },
 ];
 
@@ -68,7 +72,7 @@ const MobileSidebarContent = ({ pathname, onClose }: MobileSidebarContentProps) 
             onClick={onClose}
             className={cn(
               "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-primary hover:bg-primary/10 rounded-lg transition",
-              pathname === route.href ? "text-primary bg-primary/10" : "text-muted-foreground"
+              pathname === route.href ? cn("text-primary bg-primary/10", route.bgColor, route.color) : "text-muted-foreground"
             )}
           >
             <div className="flex items-center flex-1">
@@ -123,13 +127,13 @@ export function Sidebar() {
 								className={cn(
 									"group flex items-center h-14 rounded-2xl transition-all duration-300 overflow-hidden",
 									"hover:bg-neutral-100 dark:hover:bg-white/5",
-									isActive ? "bg-neutral-100 dark:bg-white/10 shadow-sm" : "text-neutral-500 dark:text-neutral-400"
+									isActive ? cn(route.bgColor, "shadow-sm") : "text-neutral-500 dark:text-neutral-400"
 								)}>
 								<div className="w-16 shrink-0 flex items-center justify-center">
-									<route.icon className={cn("h-6 w-6 transition-colors", isActive ? "text-neutral-900 dark:text-white" : "group-hover:text-neutral-900 dark:group-hover:text-white")} />
+									<route.icon className={cn("h-6 w-6 transition-colors", isActive ? route.color : "group-hover:text-neutral-900 dark:group-hover:text-white")} />
 								</div>
 								<div className={cn("overflow-hidden transition-all duration-300 whitespace-nowrap", isExpanded ? "opacity-100 ml-4 w-auto" : "opacity-0 w-0")}>
-									<span className={cn("text-sm font-semibold", isActive ? "text-neutral-900 dark:text-white" : "group-hover:text-neutral-900 dark:group-hover:text-white")}>{route.label}</span>
+									<span className={cn("text-sm font-semibold", isActive ? route.color : "group-hover:text-neutral-900 dark:group-hover:text-white")}>{route.label}</span>
 								</div>
 							</Link>
 						);
