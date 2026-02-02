@@ -1,9 +1,6 @@
 export const dynamic = "force-dynamic";
 import { getDashboardData } from "@/lib/dashboard-data";
 import { DraggableDashboard } from "@/components/DraggableDashboard";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import Link from "next/link";
 import { ModeToggle } from "@/components/mode-toggle";
 import { StockSearch } from "@/components/StockSearch";
 import { DraggableWatchlist } from "@/components/DraggableWatchlist";
@@ -25,19 +22,21 @@ export default async function DashboardPage() {
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8">
       
-      {/* Toolbar / Header Area */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
+      {/* Header Area */}
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
+        <div className="w-full md:w-1/4">
            <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-           <p className="text-muted-foreground">Market overview and watchlist</p>
+           <p className="text-muted-foreground">Market overview</p>
         </div>
         
-        <div className="flex items-center gap-2 w-full md:w-auto">
+        {/* Centered Search */}
+        <div className="w-full md:w-1/2 flex justify-center z-10">
           <StockSearch />
+        </div>
+
+        {/* Right Actions */}
+        <div className="w-full md:w-1/4 flex justify-end">
           <ModeToggle />
-          <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-             <Link href="/add"><Plus className="w-4 h-4 mr-1"/> Add Stock</Link>
-          </Button>
         </div>
       </div>
 
@@ -52,7 +51,7 @@ export default async function DashboardPage() {
               <DraggableWatchlist initialStocks={stocks} />
             ) : (
               <div className="p-8 text-center text-muted-foreground border border-dashed rounded-lg bg-secondary/20">
-                No stocks tracked. Click "Add Stock" to start.
+                No stocks tracked. Use the search bar to add one.
               </div>
             )}
           </div>

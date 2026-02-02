@@ -154,12 +154,12 @@ export function NewsFeed({ initialNews }: { initialNews: NewsItem[] }) {
         <div 
           onMouseEnter={() => setIsPaused(true)} 
           onMouseLeave={() => setIsPaused(false)}
-          className="relative h-[450px] w-full rounded-2xl overflow-hidden border border-border shadow-xl bg-card dark:bg-zinc-950 group"
+          className="relative h-[450px] w-full rounded-2xl overflow-hidden border border-border shadow-xl bg-card group"
         >
           {/* Main Clickable Area */}
           <Link href={currentHero.link} target="_blank" className="block w-full h-full">
             {/* Background */}
-            <div className={`absolute inset-0 ${!heroImage ? getFallbackGradient(currentHero.title) : 'bg-neutral-100 dark:bg-zinc-900'}`}>
+            <div className={`absolute inset-0 ${!heroImage ? getFallbackGradient(currentHero.title) : 'bg-neutral-100 dark:bg-card'}`}>
                {heroImage && (
                  <Image 
                    key={heroImage} // Force re-render for smooth fade

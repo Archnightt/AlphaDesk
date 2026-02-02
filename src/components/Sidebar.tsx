@@ -98,7 +98,7 @@ export function Sidebar() {
 			<div
 				className={cn(
 					"hidden md:flex flex-col justify-between fixed left-4 top-4 bottom-4 z-50",
-					"bg-[#f8f8f8] dark:bg-neutral-900 border border-neutral-200 dark:border-white/5",
+					"bg-[#f8f8f8] dark:bg-card border border-neutral-200 dark:border-white/5",
 					"rounded-[1.5rem] overflow-hidden",
 					"transition-[width] duration-300 ease-in-out",
 					isExpanded ? "w-64" : "w-24"
