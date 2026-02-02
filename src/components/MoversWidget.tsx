@@ -57,7 +57,7 @@ function MoverList({ items, type }: { items: Mover[], type: 'gainers' | 'losers'
 
 export function MoversWidget({ gainers, losers }: { gainers: any[], losers: any[] }) {
   return (
-    <Card className="h-full flex flex-col shadow-sm dark:bg-secondary/20">
+    <Card className="h-full flex flex-col shadow-sm dark:bg-card">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-medium flex items-center gap-2">
           Market Movers

@@ -12,7 +12,9 @@ const MARKET_GROUPS = {
 export async function getDashboardData() {
   try {
     // @ts-ignore
-    const yf = new yahooFinance();
+    const yf = new yahooFinance({ 
+      validation: { logErrors: false } 
+    });
     
     // 1. Fetch Featured Stock (Database)
     const featuredStock = await prisma.stock.findFirst({
@@ -56,8 +58,8 @@ export async function getDashboardData() {
     const trendingPromise = yf.trendingSymbols('US').catch(() => ({ quotes: [] }));
     
     // Use screener as dailyGainers/dailyLosers are deprecated
-    const gainersPromise = yf.screener({ scrIds: 'day_gainers', count: 10 }).catch(() => ({ quotes: [] }));
-    const losersPromise = yf.screener({ scrIds: 'day_losers', count: 10 }).catch(() => ({ quotes: [] }));
+    const gainersPromise = yf.screener({ scrIds: 'day_gainers', count: 10 }, { validate: false } as any).catch(() => ({ quotes: [] }));
+    const losersPromise = yf.screener({ scrIds: 'day_losers', count: 10 }, { validate: false } as any).catch(() => ({ quotes: [] }));
     
     // Fetch from multiple sources to guarantee volume
     const newsPromise = Promise.all([

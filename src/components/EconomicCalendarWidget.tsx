@@ -25,7 +25,7 @@ export function EconomicCalendarWidget({ events }: { events: CalendarEvent[] }) 
   ];
 
   return (
-    <Card className="h-full flex flex-col shadow-sm dark:bg-secondary/20">
+    <Card className="h-full flex flex-col shadow-sm dark:bg-card">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-medium flex items-center gap-2">
           <CalendarDays className="w-5 h-5 text-primary" />
@@ -50,10 +50,10 @@ export function EconomicCalendarWidget({ events }: { events: CalendarEvent[] }) 
                 <span className="text-sm font-semibold leading-tight">{item.event}</span>
               </div>
               <div className="text-right min-w-[60px]">
-                <div className="text-xs font-mono text-muted-foreground">
+                <div className="text-xs font-mono text-muted-foreground" suppressHydrationWarning>
                   {new Date(item.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                 </div>
-                <div className="text-xs text-muted-foreground/70">
+                <div className="text-xs text-muted-foreground/70" suppressHydrationWarning>
                   {new Date(item.date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                 </div>
               </div>
