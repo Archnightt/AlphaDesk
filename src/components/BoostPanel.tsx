@@ -261,7 +261,7 @@ export function BoostPanel() {
 
       {/* Footer */}
       <div className="pt-2 border-t border-border/50 flex justify-between items-center">
-        <span className="text-xs text-muted-foreground font-medium">AlphaDesk Boost</span>
+        <span className="text-xs text-muted-foreground font-medium">QuantView Boost</span>
         <Button variant="ghost" size="sm" onClick={reset} className="h-7 text-xs text-destructive hover:bg-destructive/10">
           <RotateCcw className="w-3 h-3 mr-1" /> Reset
         </Button>

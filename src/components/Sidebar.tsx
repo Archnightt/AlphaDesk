@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   LayoutDashboard, 
   Newspaper, 
@@ -19,6 +19,7 @@ import Image from "next/image";
 import { useSidebar } from "@/components/SidebarProvider";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { BoostPanel } from "@/components/BoostPanel";
+import { useTheme } from "next-themes";
 
 const routes = [
   {
@@ -49,17 +50,29 @@ interface MobileSidebarContentProps {
   onClose: () => void;
 }
 
-const MobileSidebarContent = ({ pathname, onClose }: MobileSidebarContentProps) => (
-  <div className="h-full flex flex-col py-4">
-    <div className="px-3 py-2 flex-1">
-      <Link href="/" className="flex items-center pl-3 mb-14" onClick={onClose}>
-        <div className="relative w-8 h-8 mr-4">
-           <Image fill alt="Logo" src="/logo.png" className="rounded-full object-cover" />
-        </div>
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-sky-500 to-violet-500 bg-clip-text text-transparent">
-          AlphaDesk
-        </h1>
-      </Link>
+const MobileSidebarContent = ({ pathname, onClose }: MobileSidebarContentProps) => {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return (
+    <div className="h-full flex flex-col py-4">
+      <div className="px-3 py-2 flex-1">
+        <Link href="/" className="flex items-center pl-3 mb-14" onClick={onClose}>
+          <div className="relative w-40 h-10">
+            {mounted && (
+              <Image 
+                fill 
+                alt="Logo" 
+                src={resolvedTheme === "dark" ? "/dark-logo.png" : "/logo.png"} 
+                className="object-contain" 
+              />
+            )}
+          </div>
+        </Link>
       <div className="space-y-1">
         {routes.map((route) => (
           <Link
@@ -79,13 +92,24 @@ const MobileSidebarContent = ({ pathname, onClose }: MobileSidebarContentProps) 
         ))}
       </div>
     </div>
-  </div>
-);
+    </div>
+  );
+};
 
 export function Sidebar() {
   const pathname = usePathname();
   const { isExpanded, toggleSidebar } = useSidebar();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const logoSrc = isExpanded 
+    ? (mounted && resolvedTheme === "dark" ? "/dark-logo.png" : "/logo.png")
+    : (mounted && resolvedTheme === "dark" ? "/dark-alt-logo.png" : "/alt-logo.png");
 
   return (
 		<>
@@ -99,15 +123,18 @@ export function Sidebar() {
 					isExpanded ? "w-64" : "w-24"
 				)}>
 				{/* Top Section: Logo */}
-				<div className="flex flex-col items-center py-8 px-4">
-					<Link href="/" className="flex items-center w-full group">
-						<div className="w-16 shrink-0 flex items-center justify-center">
-							<div className="relative w-12 h-12">
-								<Image fill alt="Logo" src="/logo.png" className="rounded-2xl object-cover shadow-lg" />
-							</div>
-						</div>
-						<div className={cn("overflow-hidden transition-all duration-300 whitespace-nowrap", isExpanded ? "opacity-100 ml-4 w-auto" : "opacity-0 w-0")}>
-							<h1 className="text-xl font-bold text-neutral-900 dark:text-white tracking-tight">AlphaDesk</h1>
+				<div className="flex flex-col items-center py-8 px-2">
+					<Link href="/" className="flex items-center justify-center w-full group">
+						<div className={cn("relative transition-all duration-300 flex items-center justify-center", isExpanded ? "w-48 h-12" : "w-12 h-12")}>
+							{mounted && (
+								<Image 
+									fill 
+									alt="Logo" 
+									src={logoSrc} 
+									className={cn("object-contain transition-all duration-300", !isExpanded && "rounded-2xl")} 
+									priority
+								/>
+							)}
 						</div>
 					</Link>
 				</div>
@@ -186,7 +213,18 @@ export function Sidebar() {
 						<MobileSidebarContent pathname={pathname} onClose={() => setIsMobileOpen(false)} />
 					</SheetContent>
 				</Sheet>
-				<div className="ml-4 font-bold text-xl bg-gradient-to-r from-sky-500 to-violet-500 bg-clip-text text-transparent">AlphaDesk</div>
+				<div className="ml-4 flex items-center">
+					{mounted && (
+						<div className="relative w-32 h-8">
+							<Image 
+								fill 
+								alt="Logo" 
+								src={resolvedTheme === "dark" ? "/dark-logo.png" : "/logo.png"} 
+								className="object-contain"
+							/>
+						</div>
+					)}
+				</div>
 			</div>
 		</>
 	);

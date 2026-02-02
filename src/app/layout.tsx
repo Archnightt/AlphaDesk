@@ -10,7 +10,7 @@ import { MainContentWrapper } from "@/components/MainContentWrapper";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AlphaDesk",
+  title: "QuantView",
   description: "Personal Financial Dashboard",
 };
 
