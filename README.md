@@ -1,20 +1,19 @@
 <h1>AlphaDesk – GenAI Powered Market Dashboard</h1>
-
-<table width="100%">
+<table>
   <tr>
     <td width="50%">
-      <img src="https://github.com/user-attachments/assets/b01c7e5b-25fc-4a5b-bd47-53ecd624ea6e" alt="Dashboard Overview" width="100%">
+      <img width="2933" height="2078" alt="Watchlist" src="https://github.com/user-attachments/assets/b2fc3356-e16b-4893-a4f9-8bb09975e40e" />
     </td>
     <td width="50%">
-      <img src="https://github.com/user-attachments/assets/d878c665-349c-4d62-b40f-347966dd8258" alt="Stock Details and AI Analysis" width="100%">
+      <img width="1470" height="920" alt="Market Overview" src="https://github.com/user-attachments/assets/02f3ecac-1244-40f0-87f0-cecce0b191ff" />
     </td>
   </tr>
   <tr>
     <td width="50%">
-      <img src="https://github.com/user-attachments/assets/d4978fb2-5498-4856-addb-1d970642b0a5" alt="Market News View" width="100%">
+      <img alt="Theme" src="https://github.com/user-attachments/assets/f268b2aa-9063-4508-9620-16bec5bb9871">
     </td>
     <td width="50%">
-      <img src="https://github.com/user-attachments/assets/f0abb311-9b0a-4855-a601-74bd4b798003" alt="Mobile Responsive View" width="100%">
+      <img alt="Market News" src="https://github.com/user-attachments/assets/d606b902-1e5b-4550-ab55-a9d139eecb0a" />
     </td>
   </tr>
 </table>
