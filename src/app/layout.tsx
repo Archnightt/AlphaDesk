@@ -12,6 +12,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "QuantView",
   description: "Personal Financial Dashboard",
+  icons: {
+    icon: "/favicon.ico?v=2",
+  },
 };
 
 export default function RootLayout({
