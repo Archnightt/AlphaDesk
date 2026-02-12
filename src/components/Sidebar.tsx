@@ -67,7 +67,7 @@ const MobileSidebarContent = ({ pathname, onClose }: MobileSidebarContentProps) 
               <Image 
                 fill 
                 alt="Logo" 
-                src={resolvedTheme === "dark" ? "/dark-logo.png" : "/logo.png"} 
+                src={resolvedTheme === "dark" ? "/dark-logo.webp" : "/logo.webp"} 
                 className="object-contain" 
               />
             )}
@@ -108,8 +108,8 @@ export function Sidebar() {
   }, []);
 
   const logoSrc = isExpanded 
-    ? (mounted && resolvedTheme === "dark" ? "/dark-logo.png" : "/logo.png")
-    : (mounted && resolvedTheme === "dark" ? "/dark-alt-logo.png" : "/alt-logo.png");
+    ? (mounted && resolvedTheme === "dark" ? "/dark-logo.webp" : "/logo.webp")
+    : (mounted && resolvedTheme === "dark" ? "/dark-alt-logo.webp" : "/alt-logo.webp");
 
   return (
 		<>
@@ -219,7 +219,7 @@ export function Sidebar() {
 							<Image 
 								fill 
 								alt="Logo" 
-								src={resolvedTheme === "dark" ? "/dark-logo.png" : "/logo.png"} 
+								src={resolvedTheme === "dark" ? "/dark-logo.webp" : "/logo.webp"} 
 								className="object-contain"
 							/>
 						</div>
